@@ -4,8 +4,8 @@ require File.expand_path('../lib/grandprix/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Rafael de F. Ferreira"]
   gem.email         = ["public@rafaelferreira.net"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{Deploy assistant.}
+  gem.summary       = %q{Deploy assistant}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($\)
@@ -13,5 +13,5 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.name          = "grandprix"
   gem.require_paths = ["lib"]
-  gem.version       = Grandprix::VERSION
+  gem.version       = File.read("version").chomp
 end
