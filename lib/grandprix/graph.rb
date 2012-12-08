@@ -1,36 +1,49 @@
 class Grandprix::Graph
   class PredecessorCount
     def initialize(edges)
-      @preds_count = {}
-      edges.each do |pair|
-        j, k = pair
-        @preds_count[j] = 0 
-        @preds_count[k] = 0
-      end
-      
+      @counts = {}
       edges.each do |j, k|
-        @preds_count[k] += 1
+        @counts[j] ||= 0 
+        @counts[k] ||= 0 
+
+        @counts[k] += 1
       end
     end
 
     def decrement_all(vertices)
       vertices.each do |suc|
-        @preds_count[suc] -= 1
+        @counts[suc] -= 1
       end
     end
 
     def zeroes
-      @preds_count.select {|vertex,count| count == 0 }.keys      
+      @counts.select {|vertex,count| count == 0 }.keys      
     end
 
     def zeroes_among(vertices)
       vertices.select do |v|
-        @preds_count[v] == 0
+        @counts[v] == 0
       end
     end
 
     def size
-      @preds_count.size
+      @counts.size
+    end
+  end
+
+  class SuccessorTable
+    def initialize(edges)
+      @successors = {}
+      edges.each do |j, k|
+        @successors[j] ||= []
+        @successors[k] ||= []
+
+        @successors[j].push k
+      end
+    end
+
+    def of(origin)
+      @successors[origin]
     end
   end
 
@@ -38,29 +51,11 @@ class Grandprix::Graph
     def initialize(graph)
       @graph = graph
       @preds_count = PredecessorCount.new graph
-      @successors  = {}
+      @successors  = SuccessorTable.new graph
     end
     
     def solve
-      analize
-
       sort_graph
-    end
-
-    def analize
-      init_tables
-
-      @graph.each do |j, k|
-        @successors[j].push k
-      end
-    end
-
-    def init_tables
-      @graph.each do |pair|
-        j, k = pair
-        @successors[j] = []
-        @successors[k] = []
-      end
     end
 
     def sort_graph
@@ -68,7 +63,7 @@ class Grandprix::Graph
         return ordered_vertices if queue.empty?
         current, *rest = queue
 
-        successors = @successors[current]
+        successors = @successors.of(current)
         @preds_count.decrement_all successors
 
         new_queue = rest + @preds_count.zeroes_among(successors)
@@ -82,6 +77,7 @@ class Grandprix::Graph
     def initial_queue
       @preds_count.zeroes
     end
+
     def num_vertices
       @preds_count.size
     end
