@@ -1,4 +1,44 @@
 class Grandprix::Graph
+  def sort(graph)
+   Sort.new(graph).solve
+  end
+
+  class Sort
+    def initialize(graph)
+      @graph = graph
+      @preds_count = PredecessorCount.new graph
+      @successors  = SuccessorTable.new graph
+    end
+    
+    def solve
+      sort_graph
+    end
+
+    def sort_graph
+      def visit(queue, left, ordered_vertices)
+        return ordered_vertices if queue.empty?
+        current, *rest = queue
+
+        successors = @successors.of(current)
+        @preds_count.decrement_all successors
+
+        new_queue = rest + @preds_count.zeroes_among(successors)
+        visit new_queue, left-1, ordered_vertices.push(current)
+      end
+
+      visit initial_queue, num_vertices, []
+    end
+
+    private
+    def initial_queue
+      @preds_count.zeroes
+    end
+
+    def num_vertices
+      @preds_count.size
+    end
+  end
+
   class PredecessorCount
     def initialize(edges)
       @counts = {}
@@ -45,45 +85,5 @@ class Grandprix::Graph
     def of(origin)
       @successors[origin]
     end
-  end
-
-  class Sort
-    def initialize(graph)
-      @graph = graph
-      @preds_count = PredecessorCount.new graph
-      @successors  = SuccessorTable.new graph
-    end
-    
-    def solve
-      sort_graph
-    end
-
-    def sort_graph
-      def visit(queue, left, ordered_vertices)
-        return ordered_vertices if queue.empty?
-        current, *rest = queue
-
-        successors = @successors.of(current)
-        @preds_count.decrement_all successors
-
-        new_queue = rest + @preds_count.zeroes_among(successors)
-        visit new_queue, left-1, ordered_vertices.push(current)
-      end
-
-      visit initial_queue, num_vertices, []
-    end
-
-    private
-    def initial_queue
-      @preds_count.zeroes
-    end
-
-    def num_vertices
-      @preds_count.size
-    end
-  end
-
-  def sort(graph)
-   Sort.new(graph).solve
   end
 end
