@@ -17,3 +17,32 @@ RSpec.configure do |config|
   #     --seed 1234
   config.order = 'random'
 end
+
+RSpec::Matchers.define :be_an_ordering_of do |edges|
+  def mismatches(edges, actual_seq)
+    edges.select do |e|
+      j, k = e
+      actual_seq.find_index(j) > actual_seq.find_index(k)
+    end
+  end
+
+  def missing_vertices(edges, actual_seq)
+    edges.flatten.uniq - actual_seq
+  end
+
+  match do |actual_seq|
+    missing_vertices(edges, actual_seq).empty? && mismatches(edges, actual_seq).empty?
+  end
+  failure_message_for_should do |actual_seq|
+    if missing_vertices(edges, actual_seq)
+      "#{actual_seq} is missing these edges: #{missing_vertices(edges, actual_seq)}" 
+    else
+      <<-END
+"#{actual_seq}" is not an ordering, as these pairs are inverted:
+\t#{mismatches(edges, actual_seq).map(&:inspect).join("\n\t")}
+END
+    end
+  end
+end
+
+
