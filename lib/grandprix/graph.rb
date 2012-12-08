@@ -15,7 +15,7 @@ class Grandprix::Graph
     end
 
     def sort_graph
-      def visit(queue, left, ordered_vertices)
+      def visit(queue, ordered_vertices)
         return ordered_vertices if queue.empty?
         current, *rest = queue
 
@@ -23,10 +23,10 @@ class Grandprix::Graph
         @preds_count.decrement_all successors
 
         new_queue = rest + @preds_count.zeroes_among(successors)
-        visit new_queue, left-1, ordered_vertices.push(current)
+        visit new_queue, ordered_vertices.push(current)
       end
 
-      visit initial_queue, num_vertices, []
+      check_for_cycles visit(initial_queue, [])
     end
 
     private
@@ -36,6 +36,11 @@ class Grandprix::Graph
 
     def num_vertices
       @preds_count.size
+    end
+
+    def check_for_cycles(seq)
+      raise CycleDetected if seq.size < num_vertices
+      seq
     end
   end
 
@@ -85,5 +90,8 @@ class Grandprix::Graph
     def of(origin)
       @successors[origin]
     end
+  end
+
+  class CycleDetected < Exception
   end
 end

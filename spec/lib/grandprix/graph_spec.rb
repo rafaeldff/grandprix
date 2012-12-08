@@ -37,10 +37,47 @@ describe Grandprix::Graph do
         [5, 8], [9, 5],
         [8, 6], [2, 8],
       ]
-      res = subject.sort(edges)
-
-      #new_edges = edges.push [10, 20]
-      res.should  be_an_ordering_of(edges)
+      subject.sort(edges).should  be_an_ordering_of(edges)
     end
+
+    context "invalid input" do
+      it "should do nothing on empty imput" do
+        subject.sort([]).should == []
+      end
+      
+      it "should raise an exception when a cycle is found" do
+        #
+        #  A -> B
+        #  ^    |
+        #  |    v
+        #  D <- C
+        #
+        expect { subject.sort([[:a, :b], [:b, :c], [:c, :d], [:d, :a]]) }.to raise_error
+      end
+
+      it "should raise an exception when a cycle is found inside a graph" do
+        #
+        #        D <- E <- F -> H <-
+        #        |         ^         \
+        #        |         |          J
+        #        v         \         /
+        #  A ->  B -> C -> G -> I <-
+        #
+        expect { subject.sort([
+          [:a, :b],
+          [:b, :c],
+          [:c, :g],
+          [:g, :i],
+          [:e, :d],
+          [:f, :e],
+          [:f, :h],
+          [:d, :b],
+          [:g, :f],
+          [:j, :h],
+          [:j, :i],
+        ]) }.to raise_error
+      end
+    end
+
   end  
 end
