@@ -7,3 +7,9 @@ group :test do
   gem "rspec"
 end
 
+group :development do
+  gem "guard"
+  gem "rb-inotify", :require => false #Notify guard of file changes
+  gem "libnotify", :require => false #System notifications integration
+  gem "guard-rspec"
+end
