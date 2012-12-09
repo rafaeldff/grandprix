@@ -46,3 +46,41 @@ END
 end
 
 
+RSpec::Matchers.define :beOrderedHaving do |*initial_segment|
+  def inverted(before, after, actual_array)
+    before.flat_map do |initial_el|
+      errors = after.select {|after_el| 
+        actual_array.find_index(initial_el) > actual_array.find_index(after_el)
+      }
+      errors.empty? ?  [] : [[initial_el, errors]]
+    end
+  end
+
+  match do |actual_array|
+    missing_init = initial_segment - actual_array
+    missing_after = @after_segment - actual_array
+
+    missing_init.empty? &&
+      missing_after.empty? &&
+      inverted(initial_segment, @after_segment, actual_array).empty?
+  end
+
+  chain :before do |*after|
+    @after_segment = after
+  end
+
+  failure_message_for_should do |actual_array|
+    missing_init = initial_segment - actual_array
+    missing_after = @after_segment - actual_array
+
+    if (not missing_init.empty?) || (not missing_after.empty?)
+      puts "Missing init #{missing_init.inspect}"
+      message = ""
+      message += "Elements #{missing_init.inspect} missing in #{actual_array.inspect}\n" unless missing_init.empty?
+      message += "Elements #{missing_after.inspect} missing in #{actual_array.inspect}\n" unless missing_after.empty?
+      message
+    else
+      "Elements #{inverted(initial_segment, @after_segment, actual_array)} are in inverse order in #{actual_array.inspect}"
+    end
+  end
+end
