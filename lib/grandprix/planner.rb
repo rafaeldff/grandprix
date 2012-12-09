@@ -14,7 +14,7 @@ class Grandprix::Planner
       extended_to   = alongside[  to] + [to  ]
       new_deps = extended_from.product extended_to
 
-      compact_pairs(new_deps)
+      eliminate_self_loops compact_pairs(new_deps)
     end
 
     before_relation = invert full_dependencies
@@ -43,6 +43,10 @@ class Grandprix::Planner
     pairs.reject do |pair|
       pair.nil? || pair[0].nil? || pair[1].nil?
     end
+  end
+
+  def eliminate_self_loops(pairs)
+    pairs.reject {|x, y| x == y }
   end
 
   def flatten_edges(vertex_to_successors)

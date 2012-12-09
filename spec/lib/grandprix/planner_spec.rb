@@ -29,38 +29,79 @@ describe Grandprix::Planner do
     subject.plan(topology, elements).should == ["db", "frontend", "client"]
   end
 
-  it "should include elements that must always be deployed together" do
-    topology = {
-      "frontend" => {
-        "after" => ["backend"],
-        "alongside" => ["assets", "images"]
-      },
-      "backend" => {
-        "alongside" => ["external_backend"]
+  context " - alongside - " do
+    it "should include elements that must always be deployed together" do
+      topology = {
+        "frontend" => {
+          "after" => ["backend"],
+          "alongside" => ["assets", "images"]
+        },
+        "backend" => {
+          "alongside" => ["external_backend"]
+        }
       }
-    }
 
-    elements = ["frontend", "backend"]
+      elements = ["frontend", "backend"]
 
-    expected_deps = [
-      ["backend", "frontend"], 
-      ["backend", "assets"], 
-      ["backend", "images"], 
-      ["external_backend", "frontend"], 
-      ["external_backend", "assets"], 
-      ["external_backend", "images"], 
-    ]
+      expected_deps = [
+        ["backend", "frontend"], 
+        ["backend", "assets"], 
+        ["backend", "images"], 
+        ["external_backend", "frontend"], 
+        ["external_backend", "assets"], 
+        ["external_backend", "images"], 
+      ]
 
-    graph.should_receive(:sort) do |arg|
-      arg.should =~ expected_deps
-      ["backend", "external_backend", "assets", "images", "frontend"]
+      graph.should_receive(:sort) do |arg|
+        arg.should =~ expected_deps
+        ["external_backend", "backend", "frontend", "assets", "images"]
+      end
+
+      result = subject.plan(topology, elements)
+
+      result.should =~ ["assets", "images", "frontend", "backend", "external_backend"]
+      result.should beOrderedHaving("backend", "external_backend").before("frontend","assets", "images")
     end
 
-    result = subject.plan(topology, elements)
+    it "should allow for alongside dependencies to declare their own dependencies" do
+      topology = {
+        "frontend" => {
+          "after" => ["backend", "assets"],    # frontend depends on assets in addxition to
+          "alongside" => ["assets", "images"]  # having it declared alongside
+        },
+        "backend" => {
+          "alongside" => ["external_backend"]
+        },
+        "images" => {
+          "after" => ["client"] #images that is an alongside dep of frontend depends on client
+        }
+      }
 
-    result.should =~ ["assets", "images", "frontend", "backend", "external_backend"]
-    result.should beOrderedHaving("assets", "images").before("frontend")
-    result.should beOrderedHaving("backend", "external_backend").before("frontend")
+      elements = ["frontend", "client", "backend"]
+      expected_deps = [
+        ["assets", "frontend"], 
+        ["assets", "images"], 
+        ["client", "images"], 
+        ["backend", "frontend"], 
+        ["backend", "assets"], 
+        ["backend", "images"], 
+        ["external_backend", "frontend"], 
+        ["external_backend", "assets"], 
+        ["external_backend", "images"], 
+      ]
+
+      graph.should_receive(:sort) do |arg|
+        arg.should =~ expected_deps
+        ["client", "backend", "external_backend", "assets", "images", "frontend"]
+      end
+
+      result = subject.plan(topology, elements)
+
+      result.should =~ ["client", "backend", "external_backend", "frontend", "assets", "images"]
+      result.should beOrderedHaving("backend", "assets").before("frontend")
+      result.should beOrderedHaving("backend", "assets").before("frontend", "assets", "images")
+      result.should beOrderedHaving("client").before("images")
+    end
   end
 
   context " - input handling - " do
@@ -88,13 +129,4 @@ describe Grandprix::Planner do
   end
 
 
-  #topology = {
-  #"frontend" => {
-  #"after" => ["backend", "assets"],
-  #"alongside" => ["assets", "images"]
-  #},
-  #"backend" => {
-  #"alongside" => ["external_backend"]
-  #}
-  #}
 end

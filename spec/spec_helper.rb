@@ -79,7 +79,7 @@ RSpec::Matchers.define :beOrderedHaving do |*initial_segment|
       message += "Elements #{missing_after.inspect} missing in #{actual_array.inspect}\n" unless missing_after.empty?
       message
     else
-      "Elements #{inverted(initial_segment, @after_segment, actual_array)} are in inverse order in #{actual_array.inspect}"
+      "Elements #{inverted(initial_segment, @after_segment, actual_array).map {|x,y| "#{x} -> #{y}"}} are in inverse order in #{actual_array.inspect}"
     end
   end
 end

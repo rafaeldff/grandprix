@@ -19,5 +19,28 @@ describe Grandprix::Runner do
     
     subject.run!(topology, elements).should == ["db", "frontend", "client"]
   end
+
+    it "a complex case" do
+      topology = {
+        "frontend" => {
+          "after" => ["backend", "assets"],    # frontend depends on assets in addxition to
+          "alongside" => ["assets", "images"]  # having it declared alongside
+        },
+        "backend" => {
+          "alongside" => ["external_backend"]
+        },
+        "images" => {
+          "after" => ["client"] #images that is an alongside dep of frontend depends on client
+        }
+      }
+
+      elements = ["frontend", "client", "backend", "extra"] #extra is not mentioned on the topology
+      result = subject.run!(topology, elements)
+
+      result.should =~ ["client", "backend", "external_backend", "frontend", "assets", "images", "extra"]
+      result.should beOrderedHaving("backend", "assets").before("frontend")
+      result.should beOrderedHaving("backend", "assets").before("frontend", "assets", "images")
+      result.should beOrderedHaving("client").before("images")
+    end
   
 end
