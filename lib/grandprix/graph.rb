@@ -11,10 +11,6 @@ class Grandprix::Graph
     end
     
     def solve
-      sort_graph
-    end
-
-    def sort_graph
       def visit(queue, ordered_vertices)
         return ordered_vertices if queue.empty?
         current, *rest = queue
@@ -74,6 +70,12 @@ class Grandprix::Graph
     def size
       @counts.size
     end
+
+    def to_s
+      ks = @counts.keys.map{|k| k.to_s.rjust 2}.join(" ")
+      vs = @counts.values.map{|v| v.to_s.rjust 2}.join(" ")
+      "Predecessors:\n#{ks}\n#{vs}\n"
+    end
   end
 
   class SuccessorTable
@@ -89,6 +91,12 @@ class Grandprix::Graph
 
     def of(origin)
       @successors[origin]
+    end
+
+    def to_s
+      ks = @successors.keys.map{|k| k.to_s.rjust 6}.join(" ")
+      vs = @successors.values.map{|v| v.inspect.rjust 6}.join(" ")
+      "Successors  :\n#{ks}\n#{vs}\n"
     end
   end
 

@@ -55,12 +55,22 @@ describe Grandprix::Graph do
         expect { subject.sort([[:a, :b], [:b, :c], [:c, :d], [:d, :a]]) }.to raise_error
       end
 
-      it "should raise an exception when a cycle is found inside a graph" do
+      it "should raise an exception when a cycle is found in a small graph" do
+        #
+        # Z -> A -> B
+        #      ^    |
+        #      |    v
+        #      D <- C
+        #
+        expect { subject.sort([[:z, :a], [:a, :b], [:b, :c], [:c, :d], [:d, :a]]) }.to raise_error
+      end
+
+      it "should raise an exception when a cycle is found inside a larger graph" do
         #
         #        D <- E <- F -> H <-
         #        |         ^         \
         #        |         |          J
-        #        v         \         /
+        #        v         |         /
         #  A ->  B -> C -> G -> I <-
         #
         expect { subject.sort([
