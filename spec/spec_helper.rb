@@ -74,7 +74,6 @@ RSpec::Matchers.define :beOrderedHaving do |*initial_segment|
     missing_after = @after_segment - actual_array
 
     if (not missing_init.empty?) || (not missing_after.empty?)
-      puts "Missing init #{missing_init.inspect}"
       message = ""
       message += "Elements #{missing_init.inspect} missing in #{actual_array.inspect}\n" unless missing_init.empty?
       message += "Elements #{missing_after.inspect} missing in #{actual_array.inspect}\n" unless missing_after.empty?

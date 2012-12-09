@@ -29,7 +29,7 @@ describe Grandprix::Planner do
     subject.plan(topology, elements).should == ["db", "frontend", "client"]
   end
 
-  xit "should include elements that must always be deployed together" do
+  it "should include elements that must always be deployed together" do
     topology = {
       "frontend" => {
         "after" => ["backend"],
@@ -41,17 +41,26 @@ describe Grandprix::Planner do
     }
 
     elements = ["frontend", "backend"]
-    
-    graph.should_receive(:sort).with([
+
+    expected_deps = [
       ["backend", "frontend"], 
       ["backend", "assets"], 
       ["backend", "images"], 
       ["external_backend", "frontend"], 
       ["external_backend", "assets"], 
       ["external_backend", "images"], 
-    ]).and_return(["backend", "external_backend", "assets", "images", "frontend"])
+    ]
 
-    subject.plan(topology, elements).should == ["db", "frontend", "client"]
+    graph.should_receive(:sort) do |arg|
+      arg.should =~ expected_deps
+      ["backend", "external_backend", "assets", "images", "frontend"]
+    end
+
+    result = subject.plan(topology, elements)
+
+    result.should =~ ["assets", "images", "frontend", "backend", "external_backend"]
+    result.should beOrderedHaving("assets", "images").before("frontend")
+    result.should beOrderedHaving("backend", "external_backend").before("frontend")
   end
 
   context " - input handling - " do
