@@ -56,7 +56,8 @@ RSpec::Matchers.define :beOrderedHaving do |*initial_segment|
     end
   end
 
-  match do |actual_array|
+  match do |actual_array_object|
+    actual_array = actual_array_object.to_a
     missing_init = initial_segment - actual_array
     missing_after = @after_segment - actual_array
 
@@ -69,7 +70,9 @@ RSpec::Matchers.define :beOrderedHaving do |*initial_segment|
     @after_segment = after
   end
 
-  failure_message_for_should do |actual_array|
+  failure_message_for_should do |actual_array_object|
+    actual_array = actual_array_object.to_a
+
     missing_init = initial_segment - actual_array
     missing_after = @after_segment - actual_array
 

@@ -17,7 +17,7 @@ describe Grandprix::Runner do
 
     elements = ["frontend", "db", "client"]
     
-    subject.run!(topology, elements).should == ["db", "frontend", "client"]
+    subject.run!(topology, elements).to_a.should == ["db", "frontend", "client"]
   end
 
     it "a complex case" do
@@ -37,7 +37,7 @@ describe Grandprix::Runner do
       elements = ["frontend", "client", "backend", "extra"] #extra is not mentioned on the topology
       result = subject.run!(topology, elements)
 
-      result.should =~ ["client", "backend", "external_backend", "frontend", "assets", "images", "extra"]
+      result.to_a.should =~ ["client", "backend", "external_backend", "frontend", "assets", "images", "extra"]
       result.should beOrderedHaving("backend", "assets").before("frontend")
       result.should beOrderedHaving("backend", "assets").before("frontend", "assets", "images")
       result.should beOrderedHaving("client").before("images")

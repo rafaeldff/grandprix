@@ -26,7 +26,7 @@ describe Grandprix::Planner do
       ["frontend", "client"], 
     ]).and_return(["mq", "db", "backend", "frontend", "client"])
 
-    subject.plan(topology, elements).should == ["db", "frontend", "client"]
+    subject.plan(topology, elements).to_a.should == ["db", "frontend", "client"]
   end
 
   context " - alongside - " do
@@ -59,7 +59,7 @@ describe Grandprix::Planner do
 
       result = subject.plan(topology, elements)
 
-      result.should =~ ["assets", "images", "frontend", "backend", "external_backend"]
+      result.to_a.should =~ ["assets", "images", "frontend", "backend", "external_backend"]
       result.should beOrderedHaving("backend", "external_backend").before("frontend","assets", "images")
     end
 
@@ -97,7 +97,7 @@ describe Grandprix::Planner do
 
       result = subject.plan(topology, elements)
 
-      result.should =~ ["client", "backend", "external_backend", "frontend", "assets", "images"]
+      result.to_a.should =~ ["client", "backend", "external_backend", "frontend", "assets", "images"]
       result.should beOrderedHaving("backend", "assets").before("frontend")
       result.should beOrderedHaving("backend", "assets").before("frontend", "assets", "images")
       result.should beOrderedHaving("client").before("images")
@@ -123,7 +123,7 @@ describe Grandprix::Planner do
         ["mq", "backend"], 
       ]).and_return(["mq", "db", "backend", "frontend"])
 
-      subject.plan(topology, elements).should == ["client","db", "frontend"]
+      subject.plan(topology, elements).to_a.should == ["client","db", "frontend"]
     end
 
   end
