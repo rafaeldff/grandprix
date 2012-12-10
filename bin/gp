@@ -12,8 +12,8 @@ end
 
 topology = YAML.load_file $topology_file
 
-elements_input = ARGF.read
-elements = elements_input.lines.to_a
+elements_input = ARGF.read.chomp
+elements = elements_input.lines.map(&:chomp).to_a
 
 output = Grandprix::Runner.new.run! topology, elements
-puts output.join("\n")
+STDOUT.puts output.join("\n")
