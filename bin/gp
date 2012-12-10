@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+require 'grandprix'
+require 'optparse'
+
+OptionParser.new do |o|
+  o.on("-t", "--topology FILENAME", "path to the topology YAML file") do |filename|
+    $topology_file = filename
+  end
+  o.on('-h') { puts o; exit }
+  o.parse!
+end
+
+topology = YAML.load_file $topology_file
+
+elements_input = ARGF.read
+elements = elements_input.lines.to_a
+
+output = Grandprix::Runner.new.run! topology, elements
+puts output.join("\n")
