@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 require 'grandprix'
 require 'optparse'
+require 'yaml' 
 
 OptionParser.new do |o|
   o.on("-t", "--topology FILENAME", "path to the topology YAML file") do |filename|
