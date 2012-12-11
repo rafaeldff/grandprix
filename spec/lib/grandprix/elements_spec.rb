@@ -18,7 +18,13 @@ describe Grandprix::Elements do
 
   describe :alongside do
     it "should store the extra names" do
-      (make([:a,:c]).alongside a: :aa, c: :cc).should == make([:a, :c, :aa, :cc]) 
+      (make([:a,:c]).alongside a: [:aa], c: [:cc]).should == make([:a, :c, :aa, :cc]) 
+    end
+
+    it "should copy extra data from the stored names to the names defined alongside" do
+      elements = make ["first=0.1", "second=0.2"]
+      res = elements.alongside "first" => ["one"], "second" => ["two"]
+      res.underlying.should == [["first", "0.1"], ["second", "0.2"], ["one", "0.1"], ["two", "0.2"]]
     end
   end
 end

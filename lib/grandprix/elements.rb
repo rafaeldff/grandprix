@@ -28,7 +28,7 @@ class Grandprix::Elements
   def reorder(ordering)
     names_in_order = ordering & names
     new_array = names_in_order.map do |name| 
-      @array.find {|e| e.first == name}
+      find(name)
     end
 
     self.class.new(new_array)
@@ -36,8 +36,18 @@ class Grandprix::Elements
 
   # extra is a hash from names to array of names
   def alongside(extra)
-    extra_elements = self.class.build extra.values.flatten.uniq
-    self + extra_elements
+    extra_pairs = extra.flat_map do |origin_name, destination_names|
+      local_pair = find(origin_name)
+      if local_pair and local_pair.size == 2
+        extra = local_pair[1]
+        destination_names.map {|d| [d, extra] }
+      else
+        destination_names.map {|d| [d] }
+      end
+    end
+    
+    #self + extra_elements
+    self.class.new(@array + extra_pairs)
   end
 
   def names
@@ -54,8 +64,12 @@ class Grandprix::Elements
 
   def ==(other)
     return false unless other.respond_to?(:underlying)
-
     self.underlying == other.underlying
+  end
+
+  private
+  def find(name)
+    @array.find {|e| e.first == name}
   end
 
 end
