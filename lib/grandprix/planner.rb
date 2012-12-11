@@ -3,33 +3,8 @@ class Grandprix::Planner
     @graph = graph
   end
 
-  class Elements
-    def initialize(array)
-      @array = array
-    end
-
-    def +(other)
-      self.class.new(@array + other.to_a)
-    end
-
-    def -(other)
-      self.class.new(@array - other.to_a)
-    end
-
-    # ordering is an array of names
-    def reorder(ordering)
-      self.class.new(ordering & @array)
-    end
-
-    def to_a
-      @array
-    end
-    
-  end
-
-
   def plan(topology, elements_array)
-    elements = Elements.new elements_array
+    elements = Grandprix::Elements.build elements_array
 
     nested_dependencies = project(topology, "after")
     alongside = project(topology, "alongside")
@@ -48,8 +23,8 @@ class Grandprix::Planner
 
     in_order = @graph.sort before_relation
 
-    full_elements = elements + alongside.values.flatten.uniq
-    independent_elements = elements - in_order
+    full_elements = elements.alongside alongside
+    independent_elements = elements.except in_order
     elements_in_order = full_elements.reorder in_order 
 
     independent_elements + elements_in_order
