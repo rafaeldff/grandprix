@@ -27,7 +27,9 @@ class Grandprix::Planner
     independent_elements = elements.except in_order
     elements_in_order = full_elements.reorder in_order 
 
-    independent_elements + elements_in_order
+    all = independent_elements + elements_in_order
+    puts "topo: #{project(topology, "annotation")}"
+    all.annotate project(topology, "annotation")
   end
 
   private

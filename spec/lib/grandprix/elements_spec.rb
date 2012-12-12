@@ -1,15 +1,15 @@
 require 'spec_helper'
 
-describe Grandprix::Elements do
+describe Grandprix:"Elements" do
   def make(elements_array)
     Grandprix::Elements.build elements_array
   end
 
-  it { (make([:a,:b]) + make([:c,:d])).should == make([:a,:b,:c,:d]) }
+  it { (make(["a","b"]) + make(["c","d"])).should == make(["a","b","c","d"]) }
 
-  it { (make([:a,:b,:c,:d]).except [:c,:d]).should == make([:a,:b]) }
+  it { (make(["a","b","c","d"]).except ["c","d"]).should == make(["a","b"]) }
 
-  it { (make([:a,:c]).reorder [:d,:c,:b,:a]).should == make([:c,:a]) }
+  it { (make(["a","c"]).reorder ["d","c","b","a"]).should == make(["c","a"]) }
 
   it "should store extra information for each name" do
     elements = make ["first=0.1", "second=0.2"]
@@ -18,13 +18,27 @@ describe Grandprix::Elements do
 
   describe :alongside do
     it "should store the extra names" do
-      (make([:a,:c]).alongside a: [:aa], c: [:cc]).should == make([:a, :c, :aa, :cc]) 
+      (make(["a","c"]).alongside "a" => ["aa"], "c" => ["cc"]).should == make(["a", "c", "aa", "cc"]) 
     end
 
     it "should copy extra data from the stored names to the names defined alongside" do
-      elements = make ["first=0.1", "second=0.2"]
-      res = elements.alongside "first" => ["one"], "second" => ["two"]
-      res.underlying.should == [["first", "0.1"], ["second", "0.2"], ["one", "0.1"], ["two", "0.2"]]
+      elements = make ["first=0.1", "second=0.2", "third"]
+      res = elements.alongside "first" => ["one"], "second" => ["two"], "third" => ["three"]
+      res.strings.should == ["first=0.1", "second=0.2", "third", "one=0.1", "two=0.2", "three"]
+    end
+  end
+
+  describe :annotate do
+    it "should add extra string information to the appropriate names" do
+      elements = make ["first=1", "second=2", "third", "fourth=4", "fifth"]
+      res = elements.annotate "first" => "10", "second" => "20", "third" => "30"
+      res.strings.should == ["first=1=10", "second=2=20", "third=30", "fourth=4", "fifth"]
+    end
+    
+    it "should add extra object information to the appropriate names" do
+      elements = make ["first=1"]
+      res = elements.annotate "first" => {:a => "some string", "b" => ["other"]}
+      res.strings.should == [%|first=1={"a":"some string","b":["other"]}|]
     end
   end
 end
