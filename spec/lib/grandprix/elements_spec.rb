@@ -40,5 +40,11 @@ describe Grandprix:"Elements" do
       res = elements.annotate "first" => {:a => "some string", "b" => ["other"]}
       res.strings.should == [%|first=1={"a":"some string","b":["other"]}|]
     end
+
+    it {
+      elements = make ["db", "backend=2.0.0", "frontend=1.0.0"]
+      res = elements.annotate "frontend"=>"this is the frontend", "db"=>{"type"=>"document-oriented"}
+      res.strings.should == ['db={"type":"document-oriented"}', 'backend=2.0.0', 'frontend=1.0.0=this is the frontend']
+    }
   end
 end
