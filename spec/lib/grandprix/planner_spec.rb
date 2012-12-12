@@ -125,6 +125,32 @@ describe Grandprix::Planner do
 
       subject.plan(topology, elements).names.should == ["client","db", "frontend"]
     end
+  end
+
+  context " - output - " do
+    it "should annotate the elements with provided metadata, if given" do
+      topology = {
+        "frontend" => {
+          "after" => ["backend"],
+          "annotation" => "this is the frontend"
+        },
+        "backend" => {
+          "after" => ["db"]
+        },
+        "db" => {
+          "annotation" => {"type" => "document-oriented"}
+        }
+      }
+
+      elements = ["frontend=1.0.0", "backend=2.0.0", "db"]
+
+      graph.should_receive(:sort).with([
+        ["backend", "frontend"], 
+        ["db", "backend"], 
+      ]).and_return(["db", "backend", "frontend"])
+
+      subject.plan(topology, elements).strings.should == ['db=={"type":"document-oriented"}', 'backend=2.0.0', 'frontend=1.0.0=this is the frontend']
+    end
 
   end
 

@@ -1,12 +1,6 @@
 class Grandprix::Elements
   def self.build array
-    elements = array.map do |element|
-      if element =~ /([^=]*)=(.*)$/
-        [$1, $2]
-      else
-        [element]
-      end
-    end
+    elements = array.map {|element| element.split '=' }
     self.new(elements)
   end
 
@@ -48,6 +42,29 @@ class Grandprix::Elements
     
     #self + extra_elements
     self.class.new(@array + extra_pairs)
+  end
+
+  # annotations is a hash of names to metadata
+  def annotate(annotations)
+    def value_component(value)
+      return nil if value.nil?
+      return value if value.is_a? String
+      return JSON.dump(value)
+    end
+
+    new_elements = underlying.map do |element|
+      name = element.first
+      find(name).clone.tap do |row|
+        annotation = value_component annotations[name]
+        row[2] = annotation unless annotation.nil?
+      end
+    end
+
+    self.class.new new_elements
+  end
+
+  def strings
+    underlying.map {|e| e.join("=") }
   end
 
   def names

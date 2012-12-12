@@ -6,8 +6,8 @@ class Grandprix::Planner
   def plan(topology, elements_array)
     elements = Grandprix::Elements.build elements_array
 
-    nested_dependencies = project(topology, "after")
-    alongside = project(topology, "alongside")
+    nested_dependencies = project_array(topology, "after")
+    alongside = project_array(topology, "alongside")
 
     dependencies = flatten_edges nested_dependencies
 
@@ -27,14 +27,18 @@ class Grandprix::Planner
     independent_elements = elements.except in_order
     elements_in_order = full_elements.reorder in_order 
 
-    independent_elements + elements_in_order
+    all = independent_elements + elements_in_order
+    all.annotate project(topology, "annotation")
   end
 
   private
+  def project_array(hash, key)
+    projected = project(hash, key)
+    projected.tap { |h| h.default = [] }
+  end
+
   def project(hash, key)
-    projected = Hash[ compact_pairs hash.map{|element, config| [element, config[key]]} ]
-    projected.default = []
-    projected
+    Hash[ compact_pairs hash.map{|element, config| [element, config[key]]} ]
   end
 
   def invert(edges)
