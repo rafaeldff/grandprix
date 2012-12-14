@@ -1,6 +1,6 @@
 # Grandprix
 
-TODO: Write a gem description
+Plan your deploys.
 
 ## Installation
 
@@ -18,7 +18,12 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Just run
+    
+    topology -t topology_file elements_file 
+
+Check out the doc/sample directory for sample
+topology and elements files
 
 ## Contributing
 
