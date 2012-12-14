@@ -1,0 +1,8 @@
+frontend:
+  after: [backend, assets]
+
+backend:
+  after: [db]
+
+images:
+  after: [client]

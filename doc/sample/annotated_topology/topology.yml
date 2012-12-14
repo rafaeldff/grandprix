@@ -1,0 +1,13 @@
+frontend:
+  after: [backend, assets]    # frontend depends on assets in addxition to
+  alongside: [assets, images]  # having it declared alongside
+  annotation: company-frontend-script
+
+backend:
+  alongside: [external_backend]
+
+images:
+  after: [client] #images that is an alongside dep of frontend depends on client
+  annotation:
+    recipe: image-server
+    script: install-images
