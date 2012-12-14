@@ -43,4 +43,33 @@ describe Grandprix::Runner do
     result.should beOrderedHaving("client").before("images")
   end
 
+  it "REGRESSION" do
+    topology = {
+      "schumi" =>  {
+        "after" =>  ["prost", "assets"],
+        "alongside" =>  ["assets"],
+        "annotation" =>  "r7-schumi"
+      },
+
+      "prost" =>  {
+        "alongside" =>  ["prost_externo"],
+        "annotation" =>  "r7-prost"
+      },
+
+      "assets" =>  {
+        "annotation" =>  "r7-cms-assets"
+      }
+    }
+
+    elements = ["prost=1.2.3"]
+    result = subject.run!(topology, elements)
+
+    expected = [
+      "prost_externo=1.2.3",
+      "prost=1.2.3=r7-prost"
+    ]
+
+    result.strings.should =~ expected
+  end
+
 end
