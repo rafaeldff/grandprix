@@ -17,4 +17,4 @@ elements_input = ARGF.read.chomp
 elements = elements_input.lines.map(&:chomp).to_a
 
 output = Grandprix::Runner.new.run! topology, elements
-STDOUT.puts output.join("\n")
+STDOUT.puts output.strings.join("\n")
