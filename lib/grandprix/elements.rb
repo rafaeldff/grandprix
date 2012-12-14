@@ -35,8 +35,10 @@ class Grandprix::Elements
       if local_pair and local_pair.size == 2
         extra = local_pair[1]
         destination_names.map {|d| [d, extra] }
-      else
+      elsif local_pair
         destination_names.map {|d| [d] }
+      else
+        []
       end
     end
     
@@ -75,13 +77,17 @@ class Grandprix::Elements
     names
   end
 
-  def underlying
-    @array
-  end
-
   def ==(other)
     return false unless other.respond_to?(:underlying)
     self.underlying == other.underlying
+  end
+
+  def to_s
+    "<Elements #{self.strings.inspect}>"
+  end
+
+  def underlying
+    @array
   end
 
   private

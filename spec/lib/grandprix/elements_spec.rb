@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Grandprix:"Elements" do
+describe Grandprix::Elements do
   def make(elements_array)
     Grandprix::Elements.build elements_array
   end
@@ -9,11 +9,24 @@ describe Grandprix:"Elements" do
 
   it { (make(["a","b","c","d"]).except ["c","d"]).should == make(["a","b"]) }
 
-  it { (make(["a","c"]).reorder ["d","c","b","a"]).should == make(["c","a"]) }
 
   it "should store extra information for each name" do
     elements = make ["first=0.1", "second=0.2"]
     elements.underlying.should == [["first", "0.1"], ["second", "0.2"]]
+  end
+
+  describe :reorder do
+    it "should reorder the elements according to the given names sequence" do
+      (make(["a","c"]).reorder ["d","c","b","a"]).should == make(["c","a"]) 
+    end
+   
+    it "should remove elements whose names are absent from the ordering" do
+      elements = make ["prost"]
+      order = ["prost_externo", "prost", "assets", "schumi"]
+
+      result = elements.reorder order
+      result.should == elements
+    end
   end
 
   describe :alongside do
@@ -25,6 +38,14 @@ describe Grandprix:"Elements" do
       elements = make ["first=0.1", "second=0.2", "third"]
       res = elements.alongside "first" => ["one"], "second" => ["two"], "third" => ["three"]
       res.strings.should == ["first=0.1", "second=0.2", "third", "one=0.1", "two=0.2", "three"]
+    end
+
+    it "REGRESSION: it should not add unrelated names" do
+      elements = make ["prost=1.2.3"]
+      alongside = {"schumi"=>["assets"], "prost"=>["prost_externo"]}
+
+      res = elements.alongside alongside
+      res.should == make(["prost=1.2.3","prost_externo=1.2.3"])
     end
   end
 
