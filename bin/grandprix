@@ -3,15 +3,26 @@ require 'grandprix'
 require 'optparse'
 require 'yaml' 
 
-OptionParser.new do |o|
+def usage(options, message=nil)
+  puts message if message
+  puts "usage: topology -t topology_file elements_file"
+  puts "       topology -t topology_file"
+  puts
+  puts " Read elements file from a named file or standard in"
+  puts 
+  puts options
+  exit (message.nil? ? 1 : 0)
+end
+
+options = OptionParser.new do |o|
   o.on("-t", "--topology FILENAME", "path to the topology YAML file") do |filename|
     $topology_file = filename
   end
-  o.on('-h') { puts o; exit }
+  o.on('-h') { usage(o); exit }
   o.parse!
 end
 
-topology = YAML.load_file $topology_file
+topology = YAML.load_file($topology_file) rescue usage(options, "invalid topology file")
 
 elements_input = ARGF.read.chomp
 elements = elements_input.lines.map(&:chomp).to_a
