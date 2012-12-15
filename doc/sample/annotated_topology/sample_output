@@ -1,0 +1,3 @@
+images=2.0.3={"recipe":"image-server","script":"install-images"}
+backend=4.0.0=["This","And that"]
+frontend=1.0.0=company-frontend-script

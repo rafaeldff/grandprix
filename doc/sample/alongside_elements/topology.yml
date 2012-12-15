@@ -1,9 +1,11 @@
 frontend:
-  after: [backend, assets]    # frontend depends on assets in addxition to
-  alongside: [assets, images]  # having it declared alongside
+  after: [backend]             
+  alongside: [assets, images]   # Frontend is always accompanied
+                                # by assets and images
 
 backend:
   alongside: [external_backend]
 
 images:
-  after: [client] #images that is an alongside dep of frontend depends on client
+  after: [client] #images that is an alongside dep of frontend
+                  # can declare itself as after client

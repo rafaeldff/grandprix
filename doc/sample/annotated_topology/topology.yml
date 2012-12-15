@@ -1,13 +1,14 @@
 frontend:
-  after: [backend, assets]    # frontend depends on assets in addxition to
-  alongside: [assets, images]  # having it declared alongside
-  annotation: company-frontend-script
-
-backend:
-  alongside: [external_backend]
+  after: [backend, images]
+  annotation: company-frontend-script #Simple string annotation
 
 images:
-  after: [client] #images that is an alongside dep of frontend depends on client
-  annotation:
+  annotation:              #Complex annotation will serialize as JSON
     recipe: image-server
     script: install-images
+
+backend:
+  after: [db]
+  annotation:    #Will also serialize as JSON, an array in this case.
+    - This
+    - And that

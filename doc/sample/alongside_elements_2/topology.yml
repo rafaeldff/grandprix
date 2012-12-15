@@ -1,0 +1,11 @@
+frontend:
+  after: [backend, assets]     # frontend depends on assets in addition to
+  alongside: [assets, images]  # having it declared alongside
+
+backend:
+  alongside: [external_backend]
+
+images:
+  after: [client, frontend]    # Images must come before frontend, which
+                               # is perfectly compatible with it being
+                               # declared as alongside frontend
