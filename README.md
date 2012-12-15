@@ -1,6 +1,54 @@
 # Grandprix
 
-Plan your deploys.
+Grandprix is a small project with the sole function of imposing an ordering for
+a happens-before relation. It was created to help with deploy orchestration, to
+sort out which system should be upgraded before another, based on their
+dependency relationship. For instance, say we have four systems: a backend
+server, two frontend servers and a client. And we want to deploy new versions of
+every system.
+
+```                
+                    
+                        ----------------
+               ---------|  frontend_A  |<--------
+               v        ----------------        |
+    -------------                              ------------  
+    |  backend  |                              |  client  | 
+    -------------                              ------------ 
+               ^        ----------------        |
+               ---------|  frontend_B  |<--------
+                        ----------------
+```
+
+ You give grandprix a description of the ordering dependencies and a list of
+ elements:
+
+```
+client:
+  after: [frontend_A, frontend_B]
+
+frontend_A:
+  after: [backend]
+
+frontend_B:
+  after: [backend]
+```
+
+```
+backend
+client
+frontend_A
+frontend_B
+```
+
+And grandprix will output a correct ordering:
+
+```
+backend
+frontend_A
+frontend_B
+client
+```
 
 ## Installation
 
