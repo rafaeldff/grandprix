@@ -1,8 +1,9 @@
-frontend:
-  after: [backend, assets]
+client:
+  after: [frontend_A, frontend_B]
 
-backend:
-  after: [db]
+frontend_A:
+  after: [backend]
 
-images:
-  after: [client]
+frontend_B:
+  after: [backend]
+
