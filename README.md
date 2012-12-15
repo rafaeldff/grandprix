@@ -43,7 +43,7 @@ frontend_B
 
 And grandprix will output a correct ordering:
 
-```
+```yml
 backend
 frontend_A
 frontend_B
