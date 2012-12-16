@@ -63,7 +63,7 @@ and run:
 ### Usage
 An executable called `grandprix` will be installed, and can be called like this:
 
-    $ topology -t topology_file elements_file
+    $ grandprix -t topology_file elements_file
 
 The elements file argument can be omitted and grandprix will read them from
 the standard in.
