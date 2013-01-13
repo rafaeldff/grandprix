@@ -104,7 +104,7 @@ whenever there is a requirement on the topology that **B** must come after
 **A** node in the input topology file — or it may be indirect — **A**'s `after`
 list contains an element that itself has **B** in its list, and so on. If you
 know some graph theory you may have recognized the rule as a _topological sort_,
-and indeed **grandprix** is not more than a little topsort engine.
+and indeed **grandprix** is nothing more than a little topsort engine.
 
 The `doc/sample/simple` directory contains sample topology and input files, and
 an example of grandprix's output.
@@ -114,8 +114,8 @@ directories:
 
 ### Extra input data
 Elements can contain extra data that will carry over to the output, such as
-version or environment information. Just append an equals sign and the info you
-want to each element. For instance if you want to append version numbers, the
+version or environment information. Just append an equals sign and the information
+you want to each element. For instance if you want to append version numbers, the
 elements input file could be something like this: 
 
 ```
@@ -133,9 +133,9 @@ outputs.
 
 ### Topology annotations
 Adding extra data to the input elements is great for information that changes
-with each run, but it would be tedious to have to always append information
-about the elements that is more long-lasting. For this, grandprix offers a way
-to annotate the elements on the topology file:
+with each run, but it would be tedious to have to always append long-lasting 
+information about the elements for each input. To address this, grandprix 
+offers a way to annotate the elements on the topology file:
 
 ```
 frontend:
