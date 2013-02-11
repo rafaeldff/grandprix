@@ -14,4 +14,5 @@ Gem::Specification.new do |gem|
   gem.name          = "grandprix"
   gem.require_paths = ["lib"]
   gem.version       = File.read("version").chomp
+  gem.add_dependency 'json'
 end

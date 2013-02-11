@@ -37,7 +37,7 @@ describe Grandprix::Elements do
     it "should copy extra data from the stored names to the names defined alongside" do
       elements = make ["first=0.1", "second=0.2", "third"]
       res = elements.alongside "first" => ["one"], "second" => ["two"], "third" => ["three"]
-      res.strings.should == ["first=0.1", "second=0.2", "third", "one=0.1", "two=0.2", "three"]
+      res.strings.should =~ ["first=0.1", "second=0.2", "third", "one=0.1", "two=0.2", "three"]
     end
 
     it "REGRESSION: it should not add unrelated names" do
@@ -59,7 +59,11 @@ describe Grandprix::Elements do
     it "should add extra object information to the appropriate names" do
       elements = make ["first=1"]
       res = elements.annotate "first" => {:a => "some string", "b" => ["other"]}
-      res.strings.should == [%|first=1={"a":"some string","b":["other"]}|]
+      res.strings.size.should == 1
+
+      line = res.strings.first 
+      line.should match %r|first=1={.*}|
+      JSON.parse(res.strings.first.split(/=/).last).should  include({"a" => "some string", "b" => ["other"]})
     end
 
     it "should format properly when the element has no prior extra information but is annotated" do

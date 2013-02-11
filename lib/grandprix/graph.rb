@@ -58,7 +58,9 @@ class Grandprix::Graph
     end
 
     def zeroes
-      @counts.select {|vertex,count| count == 0 }.keys      
+      selected = @counts.select {|vertex,count| count == 0 }
+      hash_selected = Hash[selected]
+      hash_selected.keys      
     end
 
     def zeroes_among(vertices)
