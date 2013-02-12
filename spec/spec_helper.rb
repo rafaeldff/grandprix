@@ -86,3 +86,18 @@ RSpec::Matchers.define :beOrderedHaving do |*initial_segment|
     end
   end
 end
+
+class InAnyOrderArgumentMatcher 
+  def initialize(expected)
+    @expected = expected
+  end
+
+  def ==(value)
+    (value.is_a?(Array) && @expected.is_a?(Array) && 
+     (@expected - value) == [] && (value - @expected) == [] )
+  end
+end
+
+def in_any_order(expected)
+  InAnyOrderArgumentMatcher.new(expected)
+end

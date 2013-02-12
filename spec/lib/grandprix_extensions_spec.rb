@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+
 describe "Extension" do
   describe "Array.flat_map" do
     it { [1,2,3].flat_map{|x| [x,x]}.should == [1,1,2,2,3,3]}
@@ -16,11 +17,12 @@ describe "Extension" do
     end
 
     it do
-      h = {:a => 1, :b => 2, :b => 3, :c => 4}
+      h = [[:a,1], [:b,2], [:c,3], [:d,4]].to_ordered_hash
+      
       res = h.flat_map do |k, v|
         v % 2 == 1 ? [k] : []
       end
-      res.should == [:a, :b]
+      res.should == [:a, :c]
     end
   end
 end

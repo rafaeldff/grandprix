@@ -15,4 +15,5 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = File.read("version").chomp
   gem.add_dependency 'json'
+  gem.add_dependency 'activesupport'
 end

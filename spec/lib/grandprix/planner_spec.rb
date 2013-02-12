@@ -19,7 +19,7 @@ describe Grandprix::Planner do
 
     elements = ["frontend", "db", "client"]
     
-    graph.should_receive(:sort).with([
+    graph.should_receive(:sort).with(in_any_order [
       ["backend", "frontend"], 
       ["db", "backend"], 
       ["mq", "backend"], 
@@ -117,7 +117,7 @@ describe Grandprix::Planner do
 
       elements = ["frontend", "db", "client"]
 
-      graph.should_receive(:sort).with([
+      graph.should_receive(:sort).with(in_any_order [
         ["backend", "frontend"], 
         ["db", "backend"], 
         ["mq", "backend"], 
@@ -144,7 +144,7 @@ describe Grandprix::Planner do
 
       elements = ["frontend=1.0.0", "backend=2.0.0", "db"]
 
-      graph.should_receive(:sort).with([
+      graph.should_receive(:sort).with(in_any_order [
         ["backend", "frontend"], 
         ["db", "backend"], 
       ]).and_return(["db", "backend", "frontend"])
